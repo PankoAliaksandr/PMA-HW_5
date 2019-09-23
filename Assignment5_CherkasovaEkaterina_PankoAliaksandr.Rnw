@@ -1,0 +1,177 @@
+\documentclass{article}
+\usepackage[left=25mm,top=25mm,bottom=25mm,right=25mm]{geometry}
+\usepackage{amsfonts}
+\author{Ekaterina Cherkasova, Aliaksandr Panko}
+\title{Portfolio Management Applications - Assignment IV}
+\begin{document}
+
+\maketitle
+\vspace{1cm}
+\section*{Presentation}
+Ekaterina Cherkasova can present.\\
+Aliaksandr Panko can present.
+
+\section*{Introduction}
+The carry trade strategy is the strategy when investors can borrow the low yielding currencies to invest in the high yielding ones. Carry trade has performed extremely well for a long period without any fundamental economic explanation. \\ \newline
+In this exercise we run the parametric portfolio optimization on currencies, based on Barroso, Santa-Clara (2013): Beyond the Carry Trade: Optimal Currency Portfolios.
+The data set was provided and contains spot exchange rates, 1 month forward exchange rates and 1 month interbank offered rates. Our task was to find characteristics parameters for forward discount and momentum, which maximizes the expected utility.
+
+
+
+\section*{Data}
+For the construction of optimal parametric portfolio as in the paper by \textit{Barroso, Santa-Clara} (2013), we use the data consisting of spot exchange rates, 1 month forward exchange rates and 1 month interbank offered rates from 31-12-1998 to 31-12-2018. The following currencies are included in our data set: USD, EUR, CHF, AUD, JPY, GBP, CAD, NZD, DKK, NOK, SEK.  
+
+\section*{Constructing the optimal parametric portfolio}
+In order to make our calculations correctly , we have to check the quotation of all currencies as we need to have the price of one  US dollar expressed in foreign currency units(FTUs). Thus, we convert quotations for EUR, AUD, GBP, NZD from American into European terms. \\ \newline
+As in the paper, returns of a long position in currency $i$ are calculated using the following formula:
+\[r^{i}_{t+1}=\frac{F^{i}_{t,t+1}}{S^{i}_{t+1}}-1\]
+The weight on currency $i$ at time $t$ is calculated as
+\[w_{i,t}=\frac{\theta^{T}x_{i,t}}{N_{t}},\]
+where $\theta$ is parameter vector to be estimated, $N_{t}$ is the number of currencies available in the dataset at time $t$ and $x_{i,t}$ is vector of currency characteristics. \\ \newline
+We use the following currency characteristics:
+\begin{itemize}
+\item  forward discout($fd$)
+\item  currency momentum ($mom$)
+\end{itemize}
+The forward discount rate is calculated as
+\[fd = \frac{F^{i}_{t,t+1}}{S^{i}_{t}}-1\]
+and then standardized at each time point $t$.\\ \newline
+The results for standartized forward discount for each currency at each time point are provided in the Table 1.
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrrrr}
+  \hline
+ & EUR.fd & CHF.fd & AUD.fd & JPY.fd & GBP.fd & CAD.fd & NZD.fd & DKK.fd & NOK.fd & SEK.fd \\ 
+  \hline
+1998-12-31 & -0.379 & -1.260 & 0.297 & -1.684 & 0.935 & 0.391 & 0.160 & 0.017 & 1.793 & -0.271 \\ 
+  1999-01-29 & -0.341 & -1.241 & 0.406 & -1.614 & 0.929 & 0.556 & -0.184 & -0.088 & 1.817 & -0.240 \\ 
+  1999-02-26 & -0.307 & -1.373 & 0.429 & -1.623 & 0.816 & 0.566 & 0.309 & -0.210 & 1.723 & -0.329 \\ 
+  1999-03-31 & -0.370 & -1.156 & 0.542 & -1.891 & 0.772 & 0.543 & 0.413 & -0.135 & 1.578 & -0.296 \\ 
+  1999-04-30 & -0.516 & -1.229 & 0.548 & -1.673 & 0.779 & 0.539 & 0.385 & -0.266 & 1.712 & -0.279 \\ 
+  ... & ... & ... & ... &... & ... & ... & ... &.. & ... & \\
+   \hline
+\end{tabular}
+\caption{Standartized Forward Discount } 
+  \label{} 
+\end{table}
+\newline
+For currency momentum we use the cumulative currency appreciation in the last 3-month period:
+\[mom = \frac{S^{i}_{t+3}}{S^{i}_{t}}-1\]
+After standartization, the following momentum values are obtained:
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrrrr}
+  \hline
+ & EUR & CHF& AUD& JPY& GBP& CAD & NZD & DKK & NOK & SEK \\ 
+  \hline
+1999-03-31 & 1.318 & 1.037 & -1.528 & 0.346 & -0.017 & -1.148 & -0.925 & 1.223 & -0.062 & -0.244 \\ 
+  1999-04-30 & 0.941 & 0.988 & -1.456 & -0.000 & -0.100 & -1.237 & -1.252 & 0.907 & 0.180 & 1.028 \\ 
+  1999-05-31 & 1.113 & 1.047 & -1.611 & 0.161 & -0.408 & -1.027 & -0.829 & 1.015 & -0.422 & 0.962 \\ 
+  1999-06-30 & 0.912 & 1.092 & -1.992 & 0.222 & 0.309 & -1.312 & -0.404 & 0.920 & -0.099 & 0.351 \\ 
+  1999-07-30 & -0.367 & -0.697 & 0.577 & -1.345 & -0.166 & 1.287 & 1.933 & -0.309 & -0.068 & -0.846 \\ 
+  ... & ... & ... & ... &... & ... & ... & ... &.. & ... & \\
+   \hline
+\end{tabular}
+\caption{Standartized Momentum } 
+  \label{} 
+\end{table}
+
+Strategies used in the paper and this exercise consist of investing 100\% in US risk-free asset at $rf^{US}_{t}$ and long-short portfolio in forwards. The return of the portfolio for each period is caclulated in the following way:
+\[r_{p,t+1}=rf^{US}_{t}+\sum_{t=1}^{N_{t}} w_{i,t} r^{i}_{t+1} .\]
+The risk-free rate we use is 1 month US dollar LIBOR. Moreover, we have to convert it from an annual percentage rate to monthly (\textit{$\mbox{monthly rate} = (1 + \mbox{annual rate})^{1/12}-1$}).
+The main problem is to find the best $\theta$ for optimazing an objective function. Thus, we have to solve the following optimization problem
+\[ \max_{\theta} {\mathbb{E}_{t}}[U(r_{p,t+1})] \]
+with 
+\[U(r_{p})=\frac{(1+r_{p})^{1-\gamma}}{1-\gamma}\]
+and risk aversion coefficient $\gamma$=5.
+
+\section*{In-the-sample optimization}
+After our preliminary calculations we can run the in-the-sample optimization to get the best possible $\theta$. For this case we decide to consider the full period from 31-12-1998 until 31-12-2018 (20 years). However, as we do not have momentum values for the first three month, our period reduces and starts from 31-03-1999.\\ \newline
+We obtain the following values:
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+  $\theta_{fd}$ & $\theta_{mom}$ & $U$ \\
+  1.119 & 0.976 & 0.247\\
+\hline
+\end{tabular}
+\caption{In sample results } 
+  \label{} 
+\end{table}
+
+\section*{Out-of-sample optimization}
+For out-of-sample optimization, we consider the first 10 years (from 31-03-1999 until 31-03-2009) to estimate the first optimal parametric portfolio.Thus, we get the following values: \\
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+  $\theta_{fd}$ & $\theta_{mom}$ & $U$ \\
+  1.113 & 0.874 & 0.246\\
+\hline
+\end{tabular}
+\caption{Out-of-sample results (first 10 years)} 
+  \label{} 
+\end{table}
+
+Then we reestimate the model every month, using an expanding window of data until the end of the sample. As a result, we get the following values:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ Date & $\theta_{fd}$ & $\theta_{mom}$ \\ 
+  \hline
+30-04-2009 & 1.119 & 0.861 \\ 
+  29-05-2009 & 1.137 & 0.839 \\ 
+  30-06-2009 & 1.147 & 0.836 \\ 
+  ... & ... & ... \\ 
+  31-12-2018 & 1.119 & 0.976 \\ 
+   \hline
+\end{tabular}
+\caption{Out-of-sample results (first 10 years)} 
+  \label{} 
+\end{table}
+
+\section*{For both in-the-sample and out-of-sample plot weights in each currency over time. What can you observe about the weights?}
+In this part we only look at the weights from 30-04-1999, as this is when the out of sample period begins. For the in-sample period, we calculate the weights constant $\theta$s throughout the period. In order to compare our in-sample and out-of-sample results, we only consider the period after first 10 years.
+\begin{center}
+\includegraphics[width=0.7\textwidth]{eur.jpeg}
+\includegraphics[width=0.7\textwidth]{chf.jpeg}
+\includegraphics[width=0.7\textwidth]{aud.jpeg}
+\includegraphics[width=0.7\textwidth]{jpy.jpeg}
+\includegraphics[width=0.7\textwidth]{gbp.jpeg}
+\includegraphics[width=0.7\textwidth]{nzd.jpeg}
+\includegraphics[width=0.7\textwidth]{dkk.jpeg}
+\includegraphics[width=0.7\textwidth]{nok.jpeg}
+\includegraphics[width=0.7\textwidth]{sek.jpeg}
+\end{center}
+From these graphs we can conclude that the in-sample weights are very similar to the out-of-sample weights. This is not a surprise, as our in-sample period includes the whole period as well as the out-of-sample.
+
+\section*{For out-of-sample plot how $\theta_{fd}$ and $\theta_{mom}$ behave over time. Compare it with optimal values for in-the-sample.}
+Here we conseder our $\theta_{fd}$ and $\theta_{mom}$ for both samples over time. The out-of-sample $\theta$s are reestimeted each month, while for the in-sample  $\theta$s are constant.
+\begin{center}
+\includegraphics[width=0.7\textwidth]{fd.jpeg}
+\includegraphics[width=0.7\textwidth]{mom.jpeg}
+\end{center}
+We can conclude from the graphs above, that $\theta_{fd}$ for out-of-sample is higher than for the in-sample period. The average value for the out-of-sample is 1.159, whereas the in-sample value is 1.119 , which is smaller by 0.04. On the other hand, the in-sample $\theta_{mom}$ is significantly higher then that for the out-of-sample. Even though the out-of-sample $\theta_{mom}$ is increasing throughout the whole period, the everage value (0.891) is smaller by 0.085 then the in-samle one (0.976). The fluctuations in both $\theta$s can be explained by the expanding of the sample size and monthly reestimating. 
+
+\section*{For both in-the-sample and out-of-sample calculate average portfolio return, standard deviation of portfolio returns, certainty equivalent, beta and Sharpe ratio. Use only data after the initial 10 years to be able to compare in-the-sample and out-of-sample. Where it makes sense compare it with values for the benchmark.}
+Here we calculate the main portfolio characteristics for both in-sample and out-of-sample. For calculating beta, we use values of Deutsche Bank G10 FX Carry Basket Spot index, which goes long in the 3 highest yielding currencies and short in the 3 lowest yielding currencies. The results are presented in the table. \\ \newline
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrr}
+  \hline
+& Average Returns & St.dev & Sharpe Ratio & Beta & CEQ \\ 
+  \hline
+In sample & 0.00278 & 0.01279 & 0.2176 & 0.00007 & 0.03884 \\ 
+  Out-of-sample & 0.00274 & 0.0125 & 0.2192 & 0.00009 & 0.03842 \\ 
+   \hline
+\end{tabular}
+\caption{Portfolio characterustics} 
+  \label{} 
+\end{table}
+\newline
+The certainty equivalent return (CEQ) is the constant return that gives an investor the same utility as the time series of returns for which we want to calculate the return. Thus, we calculate the average utility using the time-varying returns, and then solve for the constant return that gives the same utility. Our results for both portfolios are very similar.\\ \newline
+The beta coefficient, in terms of finance and investing, describes how the expected return of  portfolio is correlated to the return of the financial market as a whole. We consider beta as a a measure of sensetivity. Surprisingly, for both samples the value of beta is very small, thus, we can conclude that our portfolios are less sensetive to market movements and are independent from the benchmark portfolio. Moreover, we can notice that all the statistics are quite similar for in- and out-of-sample. This fact is impressive since normally out-of-sample results are significanlty worse.
+\end{document}
