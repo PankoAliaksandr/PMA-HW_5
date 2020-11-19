@@ -1,4 +1,3 @@
-
 # Investment Strategy:
 Invest 100\% in T-bill and apply long-short strategy using currency forwards (FRA)
 # Task 
